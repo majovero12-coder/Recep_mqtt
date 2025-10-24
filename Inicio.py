@@ -3,68 +3,58 @@ import paho.mqtt.client as mqtt
 import json
 import time
 
-# 🌈 --- Estilos visuales personalizados ---
+# 🎨 --- Colores personalizados (solo estilo visual) ---
 st.markdown("""
     <style>
         /* Fondo general */
         .stApp {
-            background-color: #f5f7fa;
+            background-color: #eef1ff;
             color: #222;
-            font-family: 'Inter', sans-serif;
         }
 
         /* Títulos */
         h1, h2, h3 {
-            color: #5a3fef;
-        }
-
-        /* Botón principal */
-        .stButton button {
-            background: linear-gradient(90deg, #5a3fef, #7b61ff);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0.6em 1em;
-            font-weight: 600;
-            transition: 0.2s ease-in-out;
-        }
-        .stButton button:hover {
-            background: linear-gradient(90deg, #7b61ff, #a483ff);
-            transform: scale(1.02);
+            color: #4a3aff;
         }
 
         /* Sidebar */
         [data-testid="stSidebar"] {
-            background-color: #ebe8ff;
-            border-right: 2px solid #c8c3ff;
+            background-color: #e2e0ff;
+            color: #111;
         }
 
-        /* Inputs */
-        input, textarea {
-            border-radius: 8px !important;
-            border: 1px solid #c5bfff !important;
+        /* Botones */
+        .stButton>button {
+            background-color: #4a3aff;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            transition: 0.3s ease;
         }
-
-        /* Expander */
-        details {
-            background-color: #f2efff;
-            border-radius: 10px;
-            padding: 10px;
+        .stButton>button:hover {
+            background-color: #6d5eff;
+            transform: scale(1.03);
         }
 
         /* Métricas */
         [data-testid="stMetricValue"] {
-            color: #5a3fef;
-            font-weight: 700;
+            color: #4a3aff;
         }
 
-        /* Divider */
+        /* Expander */
+        details {
+            background-color: #f6f5ff;
+            border-radius: 10px;
+            padding: 8px;
+        }
+
+        /* Divisiones */
         hr {
-            border: 1px solid #cfcaff;
+            border: 1px solid #d7d3ff;
         }
     </style>
 """, unsafe_allow_html=True)
-
 
 # --- Configuración de la página ---
 st.set_page_config(
@@ -76,7 +66,6 @@ st.set_page_config(
 # --- Variables de estado ---
 if 'sensor_data' not in st.session_state:
     st.session_state.sensor_data = None
-
 
 # --- Función para obtener datos MQTT ---
 def get_mqtt_message(broker, port, topic, client_id):
@@ -110,7 +99,6 @@ def get_mqtt_message(broker, port, topic, client_id):
     except Exception as e:
         return {"error": str(e)}
 
-
 # --- Sidebar (configuración) ---
 with st.sidebar:
     st.subheader('⚙️ Configuración de Conexión')
@@ -126,7 +114,6 @@ with st.sidebar:
     
     client_id = st.text_input('ID del Cliente', value='streamlit_client',
                               help='Identificador único para este cliente')
-
 
 # --- Contenido principal ---
 st.title('📡 Lector de Sensor MQTT')
@@ -151,29 +138,6 @@ st.divider()
 # --- Botón para obtener datos ---
 if st.button('🔄 Obtener Datos del Sensor', use_container_width=True):
     with st.spinner('Conectando al broker y esperando datos...'):
-        sensor_data = get_mqtt_message(broker, int(port), topic, client_id)
-        st.session_state.sensor_data = sensor_data
+        se
 
-# --- Mostrar resultados ---
-if st.session_state.sensor_data:
-    st.divider()
-    st.subheader('📊 Datos Recibidos')
-    
-    data = st.session_state.sensor_data
-    
-    if isinstance(data, dict) and 'error' in data:
-        st.error(f"❌ Error de conexión: {data['error']}")
-    else:
-        st.success('✅ Datos recibidos correctamente')
-        
-        if isinstance(data, dict):
-            cols = st.columns(len(data))
-            for i, (key, value) in enumerate(data.items()):
-                with cols[i]:
-                    st.metric(label=key, value=value)
-            
-            with st.expander('📄 Ver JSON completo'):
-                st.json(data)
-        else:
-            st.code(data)
 
